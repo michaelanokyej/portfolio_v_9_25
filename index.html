@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Michael Anokye – Visionary. Builder. CEO.</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main>
+      <!-- Header -->
+      <header class="site-header">
+        <div class="container nav">
+          <a href="#" class="logo">MA</a>
+          <div class="hamburger" onclick="toggleMenu()">
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+          <nav>
+            <ul id="nav-menu">
+              <li><a href="#about">About</a></li>
+              <li><a href="#ventures">Ventures</a></li>
+              <li><a href="#blog">Blog</a></li>
+              <li><a href="#contact">Contact</a></li>
+            </ul>
+          </nav>
+        </div>
+      </header>
+
+      <!-- Hero -->
+      <section class="hero">
+        <div class="hero-content">
+          <h1>Michael Anokye</h1>
+          <h2>Visionary. Builder. CEO.</h2>
+          <p>I create brands, tools, and ventures that shift culture.</p>
+          <a href="#about" class="btn">Explore My World</a>
+        </div>
+      </section>
+
+      <!-- Quote -->
+      <section class="quote">
+        <blockquote>
+          “Vision is a language the future already understands.”
+        </blockquote>
+      </section>
+
+      <!-- About -->
+      <section id="about" class="about">
+        <div class="container">
+          <h2>A Note From Michael</h2>
+          <p>
+            As a founder and investor, my passion lies in creation — taking
+            novel ideas and shaping them into transformative brand
+            organizations. I build systems that challenge conventions and open
+            new pathways.
+          </p>
+          <p>
+            I led and helped build FreedomFlow, PicksPro, the Kente Group, Loom
+            + Gold Studios, the Kente Foundation and more.
+          </p>
+        </div>
+      </section>
+
+      <!-- Ventures -->
+      <section id="ventures" class="ventures">
+        <div class="container">
+          <h2>Ventures</h2>
+          <div id="venture-grid" class="venture-grid"></div>
+        </div>
+      </section>
+
+      <!-- Blog Grid -->
+      <section id="blog" class="blog" style="display: none">
+        <div class="container">
+          <h2>Blog</h2>
+          <div id="blog-grid" class="blog-grid"></div>
+        </div>
+      </section>
+
+      <!-- Dynamic Blog Post -->
+      <section id="blog-post" class="blog-post" style="display: none"></section>
+
+      <!-- Contact -->
+      <section id="contact" class="contact">
+        <div class="container">
+          <h2>Contact Me</h2>
+          <form name="contact" method="POST" data-netlify="true">
+            <div class="form-group">
+              <label for="name">Name</label
+              ><input type="text" id="name" name="name" required />
+            </div>
+            <div class="form-group">
+              <label for="email">Email</label
+              ><input type="email" id="email" name="email" required />
+            </div>
+            <div class="form-group">
+              <label for="message">Message</label
+              ><textarea
+                id="message"
+                name="message"
+                rows="5"
+                required
+              ></textarea>
+            </div>
+            <button type="submit" class="btn">Send Message</button>
+          </form>
+        </div>
+      </section>
+
+      <div id="venture-modal" class="modal">
+        <div class="modal-content">
+          <span class="close-modal" onclick="closeVentureModal()">&times;</span>
+          <h2 id="modal-title">Coming Soon</h2>
+          <p id="modal-description">
+            This venture is under construction. Check back soon!
+          </p>
+        </div>
+      </div>
+    </main>
+    <!-- Footer -->
+    <footer class="site-footer">
+      <div class="container">
+        <p>© 2025 Michael Anokye. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+      const blogSection = document.getElementById("blog");
+      const blogPostSection = document.getElementById("blog-post");
+      const blogGrid = document.getElementById("blog-grid");
+      const navMenu = document.getElementById("nav-menu");
+
+      function toggleMenu() {
+        navMenu.classList.toggle("active");
+        document.querySelector(".hamburger").classList.toggle("active");
+      }
+
+      function openVentureModal(venture) {
+        document.getElementById("modal-title").innerText = venture.title;
+        document.getElementById("modal-description").innerText =
+          "This venture is under construction. Check back soon!";
+        document.getElementById("venture-modal").style.display = "block";
+      }
+
+      function closeVentureModal() {
+        document.getElementById("venture-modal").style.display = "none";
+      }
+
+      function renderPost(slug) {
+        fetch("posts.json")
+          .then((res) => res.json())
+          .then((posts) => {
+            const post = posts.find((p) => p.slug === slug);
+            if (!post) return;
+
+            document
+              .querySelectorAll(
+                ".hero, .quote, .about, .ventures, .contact, .blog"
+              )
+              .forEach((el) => {
+                el.style.display = "none";
+              });
+
+            blogPostSection.innerHTML = `
+          <div class="container blog-post fade-in">
+            <a href="#blog" class="btn-sm" style="margin-bottom: 1rem; display: inline-block;">← Back to Blog</a>
+            <h1>${post.title}</h1>
+            <p class="post-meta">${new Date(
+              post.date
+            ).toLocaleDateString()} • ${post.tags?.join(", ")}</p>
+            ${
+              post.image
+                ? `<img src="${post.image}" alt="${post.title}" style="width:100%; border-radius: 12px; margin: 1rem 0;" />`
+                : ""
+            }
+            <p style="white-space: pre-line;">${post.body}</p>
+          </div>
+        `;
+            blogPostSection.style.display = "block";
+          });
+      }
+
+      function loadVentureGrid() {
+        fetch("ventures.json")
+          .then((res) => res.json())
+          .then((ventures) => {
+            const grid = document.getElementById("venture-grid");
+            ventures.forEach((v) => {
+              const card = document.createElement("div");
+              card.className = "venture-card fade-in";
+              card.setAttribute("data-slug", v.slug);
+              card.innerHTML = `
+          ${
+            v.image
+              ? `<img src="${v.image}" alt="${v.title}" class="venture-thumb" style="width:100%; border-radius:8px; margin-bottom:1rem;" />`
+              : ""
+          }
+          <h3>${v.title}</h3>
+          <p>${v.subtitle}</p>
+        `;
+              card.addEventListener("click", () => openVentureModal(v));
+              grid.appendChild(card);
+            });
+          });
+      }
+
+      function loadBlogGrid() {
+        fetch("posts.json")
+          .then((res) => res.json())
+          .then((posts) => {
+            if (!posts.length) return;
+
+            // Always clear the existing posts to avoid duplicates or stale content
+            blogGrid.innerHTML = "";
+
+            blogSection.style.display = "block";
+
+            posts.forEach((post) => {
+              const article = document.createElement("article");
+              article.className = "blog-post";
+              article.innerHTML = `
+          ${
+            post.image
+              ? `<img src="${post.image}" alt="${post.title}" class="blog-thumb" style="width:100%; border-radius:8px; margin-bottom:1rem;" />`
+              : ""
+          }
+          <h3><a href="#blog/${post.slug}">${post.title}</a></h3>
+          <p class="post-meta">${new Date(
+            post.date
+          ).toLocaleDateString()} • ${post.tags?.join(", ")}</p>
+          <p>${post.excerpt || post.body.substring(0, 120)}...</p>
+          <a href="#blog/${post.slug}" class="btn-sm">Read More</a>
+        `;
+              blogGrid.appendChild(article);
+            });
+          });
+      }
+
+      function handleRouting() {
+        const hash = window.location.hash;
+        if (hash.startsWith("#blog/")) {
+          const slug = hash.replace("#blog/", "");
+          renderPost(slug);
+        } else {
+          blogPostSection.style.display = "none";
+          document
+            .querySelectorAll(".hero, .quote, .about, .ventures, .contact")
+            .forEach((el) => {
+              el.style.display = "block";
+            });
+
+          if (hash === "#blog") {
+            loadBlogGrid();
+          }
+        }
+      }
+
+      window.addEventListener("hashchange", handleRouting);
+      // document.addEventListener("DOMContentLoaded", loadBlogGrid);
+      document.addEventListener("DOMContentLoaded", () => {
+        loadBlogGrid();
+        loadVentureGrid(); // ← Add this
+      });
+    </script>
+  </body>
+</html>

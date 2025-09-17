@@ -1,0 +1,26 @@
+[
+  {
+    "slug": "freedomflow",
+    "title": "FreedomFlow",
+    "subtitle": "Your money. Your clarity.",
+    "image": "images/freedomflow.png"
+  },
+  {
+    "slug": "pickspro",
+    "title": "PicksPro",
+    "subtitle": "GovTech redefined.",
+    "image": "images/pickspro.png"
+  },
+  {
+    "slug": "kente-group",
+    "title": "Kente Group",
+    "subtitle": "Innovation with impact.",
+    "image": "images/kente-group.png"
+  },
+  {
+    "slug": "kente-foundation",
+    "title": "Kente Foundation",
+    "subtitle": "Empowering orphans in Africa.",
+    "image": "images/kente-foundation.png"
+  }
+]

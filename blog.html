@@ -1,0 +1,68 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Blog Post</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <a href="index.html" class="logo">MA</a>
+  </header>
+
+  <main class="blog-post">
+    <div id="blog-container">
+      <h1 id="post-title"></h1>
+      <p id="post-date"></p>
+      <img id="post-image" src="" alt="" style="display:none; max-width: 100%;"/>
+      <div id="post-body"></div>
+    </div>
+  </main>
+
+  <script>
+    async function loadPost() {
+      const params = new URLSearchParams(window.location.search);
+      const slug = params.get("slug");
+
+      if (!slug) {
+        document.getElementById("blog-container").innerHTML = "<p>No blog post specified.</p>";
+        return;
+      }
+
+      try {
+        const response = await fetch("posts.json");
+        const posts = await response.json();
+        const post = posts.find(p => p.slug === slug);
+
+        if (!post) {
+          document.getElementById("blog-container").innerHTML = "<p>Blog post not found.</p>";
+          return;
+        }
+
+        document.title = post.title;
+        document.getElementById("post-title").textContent = post.title;
+        document.getElementById("post-date").textContent = new Date(post.date).toLocaleDateString();
+
+        if (post.image) {
+          const img = document.getElementById("post-image");
+          img.src = post.image;
+          img.style.display = "block";
+        }
+
+        document.getElementById("post-body").innerHTML = marked.parse(post.body);
+      } catch (error) {
+        console.error("Error loading blog post:", error);
+        document.getElementById("blog-container").innerHTML = "<p>Failed to load post.</p>";
+      }
+    }
+
+    // Load blog post content on page load
+    window.onload = loadPost;
+  </script>
+
+  <!-- Add Marked.js from CDN for Markdown parsing -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</body>
+</html>
