@@ -86,28 +86,25 @@
         <div class="container">
           <h2>Contact Me</h2>
           <form name="contact" method="POST" data-netlify="true">
+            <input type="hidden" name="form-name" value="contact" />
             <div class="form-group">
-              <label for="name">Name</label
-              ><input type="text" id="name" name="name" required />
+              <label for="name">Name</label>
+              <input type="text" id="name" name="name" required />
             </div>
             <div class="form-group">
-              <label for="email">Email</label
-              ><input type="email" id="email" name="email" required />
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" required />
             </div>
             <div class="form-group">
-              <label for="message">Message</label
-              ><textarea
-                id="message"
-                name="message"
-                rows="5"
-                required
-              ></textarea>
+              <label for="message">Message</label>
+              <textarea id="message" name="message" rows="5" required></textarea>
             </div>
             <button type="submit" class="btn">Send Message</button>
           </form>
         </div>
       </section>
 
+      <!-- Modal -->
       <div id="venture-modal" class="modal">
         <div class="modal-content">
           <span class="close-modal" onclick="closeVentureModal()">&times;</span>
@@ -118,6 +115,7 @@
         </div>
       </div>
     </main>
+
     <!-- Footer -->
     <footer class="site-footer">
       <div class="container">
@@ -137,6 +135,7 @@
         document.querySelector(".hamburger").classList.toggle("active");
       }
 
+      // -------- VENTURE LOGIC --------
       function openVentureModal(venture) {
         document.getElementById("modal-title").innerText = venture.title;
         document.getElementById("modal-description").innerText =
@@ -148,6 +147,41 @@
         document.getElementById("venture-modal").style.display = "none";
       }
 
+      function loadVentureGrid() {
+        fetch("ventures.json")
+          .then((res) => res.json())
+          .then((ventures) => {
+            const grid = document.getElementById("venture-grid");
+            grid.innerHTML = ""; // clear previous
+            ventures.forEach((v) => {
+              const card = document.createElement("div");
+              card.className = "venture-card fade-in";
+              card.innerHTML = `
+                ${
+                  v.image
+                    ? `<img src="${v.image}" alt="${v.title}" class="venture-thumb" style="width:100%; border-radius:8px; margin-bottom:1rem;" />`
+                    : ""
+                }
+                <h3>${v.title}</h3>
+                <p>${v.subtitle}</p>
+              `;
+              card.style.cursor = "pointer";
+
+              // 🔗 Open link if URL exists, otherwise show modal
+              card.addEventListener("click", () => {
+                if (v.url) {
+                  window.open(v.url, "_blank");
+                } else {
+                  openVentureModal(v);
+                }
+              });
+
+              grid.appendChild(card);
+            });
+          });
+      }
+
+      // -------- BLOG LOGIC --------
       function renderPost(slug) {
         fetch("posts.json")
           .then((res) => res.json())
@@ -164,45 +198,21 @@
               });
 
             blogPostSection.innerHTML = `
-          <div class="container blog-post fade-in">
-            <a href="#blog" class="btn-sm" style="margin-bottom: 1rem; display: inline-block;">← Back to Blog</a>
-            <h1>${post.title}</h1>
-            <p class="post-meta">${new Date(
-              post.date
-            ).toLocaleDateString()} • ${post.tags?.join(", ")}</p>
-            ${
-              post.image
-                ? `<img src="${post.image}" alt="${post.title}" style="width:100%; border-radius: 12px; margin: 1rem 0;" />`
-                : ""
-            }
-            <p style="white-space: pre-line;">${post.body}</p>
-          </div>
-        `;
+              <div class="container blog-post fade-in" style="padding-top: 120px;">
+                <a href="#blog" class="btn-sm" style="margin-bottom: 1rem; display: inline-block;">← Back to Blog</a>
+                <h1>${post.title}</h1>
+                <p class="post-meta">${new Date(
+                  post.date
+                ).toLocaleDateString()} • ${post.tags?.join(", ")}</p>
+                ${
+                  post.image
+                    ? `<img src="${post.image}" alt="${post.title}" style="width:100%; border-radius: 12px; margin: 1rem 0;" />`
+                    : ""
+                }
+                <p style="white-space: pre-line;">${post.body}</p>
+              </div>
+            `;
             blogPostSection.style.display = "block";
-          });
-      }
-
-      function loadVentureGrid() {
-        fetch("ventures.json")
-          .then((res) => res.json())
-          .then((ventures) => {
-            const grid = document.getElementById("venture-grid");
-            ventures.forEach((v) => {
-              const card = document.createElement("div");
-              card.className = "venture-card fade-in";
-              card.setAttribute("data-slug", v.slug);
-              card.innerHTML = `
-          ${
-            v.image
-              ? `<img src="${v.image}" alt="${v.title}" class="venture-thumb" style="width:100%; border-radius:8px; margin-bottom:1rem;" />`
-              : ""
-          }
-          <h3>${v.title}</h3>
-          <p>${v.subtitle}</p>
-        `;
-              card.addEventListener("click", () => openVentureModal(v));
-              grid.appendChild(card);
-            });
           });
       }
 
@@ -211,28 +221,24 @@
           .then((res) => res.json())
           .then((posts) => {
             if (!posts.length) return;
-
-            // Always clear the existing posts to avoid duplicates or stale content
             blogGrid.innerHTML = "";
-
             blogSection.style.display = "block";
-
             posts.forEach((post) => {
               const article = document.createElement("article");
               article.className = "blog-post";
               article.innerHTML = `
-          ${
-            post.image
-              ? `<img src="${post.image}" alt="${post.title}" class="blog-thumb" style="width:100%; border-radius:8px; margin-bottom:1rem;" />`
-              : ""
-          }
-          <h3><a href="#blog/${post.slug}">${post.title}</a></h3>
-          <p class="post-meta">${new Date(
-            post.date
-          ).toLocaleDateString()} • ${post.tags?.join(", ")}</p>
-          <p>${post.excerpt || post.body.substring(0, 120)}...</p>
-          <a href="#blog/${post.slug}" class="btn-sm">Read More</a>
-        `;
+                ${
+                  post.image
+                    ? `<img src="${post.image}" alt="${post.title}" class="blog-thumb" style="width:100%; border-radius:8px; margin-bottom:1rem;" />`
+                    : ""
+                }
+                <h3><a href="#blog/${post.slug}">${post.title}</a></h3>
+                <p class="post-meta">${new Date(
+                  post.date
+                ).toLocaleDateString()} • ${post.tags?.join(", ")}</p>
+                <p>${post.excerpt || post.body.substring(0, 120)}...</p>
+                <a href="#blog/${post.slug}" class="btn-sm">Read More</a>
+              `;
               blogGrid.appendChild(article);
             });
           });
@@ -250,18 +256,15 @@
             .forEach((el) => {
               el.style.display = "block";
             });
-
-          if (hash === "#blog") {
-            loadBlogGrid();
-          }
+          if (hash === "#blog") loadBlogGrid();
         }
       }
 
+      // -------- INIT --------
       window.addEventListener("hashchange", handleRouting);
-      // document.addEventListener("DOMContentLoaded", loadBlogGrid);
       document.addEventListener("DOMContentLoaded", () => {
         loadBlogGrid();
-        loadVentureGrid(); // ← Add this
+        loadVentureGrid();
       });
     </script>
   </body>
