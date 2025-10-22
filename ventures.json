@@ -1,23 +1,16 @@
 [
   {
-    "slug": "freedomflow",
-    "title": "FreedomFlow",
-    "subtitle": "Your money. Your clarity.",
-    "image": "images/freedomflow.png",
-    "url": "https://freedomflow.app"
+    "slug": "kente-group",
+    "title": "Kente Group",
+    "subtitle": "Innovation with impact.",
+    "image": "images/kente-group.png",
+    "url": "https://kentegroupllc.com"
   },
   {
     "slug": "pickspro",
     "title": "PicksPro",
     "subtitle": "GovTech redefined.",
     "image": "images/pickspro.png"
-  },
-  {
-    "slug": "kente-group",
-    "title": "Kente Group",
-    "subtitle": "Innovation with impact.",
-    "image": "images/kente-group.png",
-    "url": "https://kentegroupllc.com"
   },
   {
     "slug": "kente-foundation",
